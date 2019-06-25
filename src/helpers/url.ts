@@ -1,4 +1,4 @@
-import { isObject, isDate } from './utils'
+import { isDate, isPlainObject } from './utils'
 
 // 进行URI编码 支持特殊字符
 /**
@@ -76,7 +76,7 @@ export function buildURL(url: string, params?: any): string {
          * 最终请求的 url 是 /base/get?date=2019-04-01T05:55:39.030Z，date 后面拼接的是 date.toISOString() 的结果
          */
         val = val.toISOString()
-      } else if (isObject(val)) {
+      } else if (isPlainObject(val)) {
         /**
          * 参数值为对象
          * params: {
