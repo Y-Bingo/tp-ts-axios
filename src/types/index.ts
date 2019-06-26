@@ -48,3 +48,17 @@ export interface AxiosResponse {
 
 // 返回promise对象
 export interface AxiosPromise extends Promise<AxiosResponse> {}
+
+// 错误类型 继承Error
+export interface AxiosEror extends Error {
+  // 请求配置
+  config: AxiosRequestConfig
+  // 错误码
+  code?: string
+  // 请求体
+  request?: any
+  // 响应体
+  response?: AxiosResponse
+  // 是否为axios的错误
+  isAxiosError: boolean
+}

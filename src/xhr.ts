@@ -1,5 +1,6 @@
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
 import { parseHeaders } from './helpers/headers'
+import { createError } from './helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
@@ -28,11 +29,13 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 
     // 监听网络错误
     request.onerror = function handleError() {
-      reject(new Error('##NETWORK 网络连接错误'))
+      reject(createError('##NETWORK 网络连接错误', config, null, request))
     }
     // 监听超时
     request.ontimeout = function handlerTimeout() {
-      reject(new Error(` ##TIMEOUT 网络连接超时: ${this.timeout}`))
+      reject(
+        createError(` ##TIMEOUT 网络连接超时: ${this.timeout}`, config, 'ECONNABORTED', request)
+      )
     }
     // 监听请求状态
     request.onreadystatechange = function handleLoad() {
@@ -52,7 +55,22 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         config,
         request
       }
-      handlerResponse(response, resolve, reject)
+
+      // 响应错误处理
+      if (response.status >= 200 && response.status < 300) {
+        resolve(response)
+      } else {
+        reject(
+          createError(
+            `##STATUS 请求失败 状态码: ${response.status}`,
+            config,
+            null,
+            request,
+            response
+          )
+        )
+      }
+      // handlerResponse( response, resolve, reject )
     }
     // 发送
     request.send(data)
@@ -60,6 +78,8 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
 }
 
 /**
+ * @deprecated
+ * fixme
  * 响应处理 处理非200状态码
  * 对于一个正常的请求，往往会返回 200-300 之间的 HTTP 状态码，
  * 对于不在这个区间的状态码，我们也把它们认为是一种错误的情况做处理
