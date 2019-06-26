@@ -1,12 +1,20 @@
-import { AxiosRequestConfig } from "./types";
+import { AxiosRequestConfig } from './types'
 
-export default function xhr ( config: AxiosRequestConfig ): void 
-{
-    const { data = null, url, method = "get" } = config;
+export default function xhr(config: AxiosRequestConfig): void {
+  const { data = null, url, method = 'get', headers } = config
 
-    const request = new XMLHttpRequest();
+  const request = new XMLHttpRequest()
 
-    request.open( method.toUpperCase(), url, true );
+  request.open(method.toUpperCase(), url, true)
 
-    request.send( data );
+  Object.keys(headers).forEach(name => {
+    // 判断没有请求body的时候 不设置headers[ content-type ]
+    if (data === null && name.toLowerCase() === 'content-type') {
+      delete headers[name]
+    } else {
+      request.setRequestHeader(name, headers[name])
+    }
+  })
+
+  request.send(data)
 }
