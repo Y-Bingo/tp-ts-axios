@@ -34,3 +34,24 @@ export function processHeaders(headers: any, data: any): any {
 
   return headers
 }
+
+/**
+ * 解析响应头
+ * string  =》 [ object Object ]
+ * @param headers
+ */
+export function parseHeaders(headers: string): any {
+  let parse = Object.create(null)
+  if (!headers) return parse
+
+  headers.split(`\r\n`).forEach(line => {
+    let [key, val] = line.split(':')
+    key = key.trim().toLowerCase()
+    if (!key) return
+    if (val) {
+      parse[key] = val
+    }
+  })
+
+  return parse
+}
