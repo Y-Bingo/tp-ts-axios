@@ -50,7 +50,7 @@ export interface AxiosResponse {
 export interface AxiosPromise extends Promise<AxiosResponse> {}
 
 // 错误类型 继承Error
-export interface AxiosEror extends Error {
+export interface AxiosError extends Error {
   // 请求配置
   config: AxiosRequestConfig
   // 错误码
