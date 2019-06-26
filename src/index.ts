@@ -1,13 +1,15 @@
 import xhr from './xhr'
-import { AxiosRequestConfig, AxiosPromise } from './types'
+import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
 import { buildURL } from './helpers/url'
-import { transformRequest } from './helpers/data'
+import { transformRequest, transformResponse } from './helpers/data'
 import { processHeaders } from './helpers/headers'
 
 function axios(config: AxiosRequestConfig): AxiosPromise {
   // TODO
   processConfig(config)
-  return xhr(config)
+  return xhr(config).then(res => {
+    return transFormResponseData(res)
+  })
 }
 
 // 请求参数预处理
@@ -28,9 +30,15 @@ function transformRequestData(config: AxiosRequestConfig): any {
   return transformRequest(config.data)
 }
 
+// 转哈请求 头
 function transFormHeaders(config: AxiosRequestConfig): void {
   const { headers = {}, data } = config
   return processHeaders(headers, data)
+}
+
+function transFormResponseData(res: AxiosResponse): AxiosResponse {
+  res.data = transformResponse(res.data)
+  return res
 }
 
 export default axios
