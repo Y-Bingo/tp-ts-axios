@@ -68,6 +68,7 @@ import axios from '../../src/index'
 // } )
 
 //  data 为普通对象的请求
+// tslint:disable-next-line: no-floating-promises
 axios( {
     method: 'post',
     url: '/base/post',
@@ -75,12 +76,17 @@ axios( {
         a: 1,
         a1: 2
     }
+} ).then( ( res ) =>
+{
+    console.log( res );
 } )
 
 // data 为普通对象请求， 设置headers
+// tslint:disable-next-line: no-floating-promises
 axios( {
     method: 'post',
     url: '/base/post',
+    responseType: "json",
     headers: {
         'content-type': 'application/json;charset=utf-8'
     },
@@ -88,31 +94,46 @@ axios( {
         b: 1,
         b1: 2
     }
+} ).then( res =>
+{
+    console.log( res );
 } )
 // data 为空， 设置headers
+// tslint:disable-next-line: no-floating-promises
 axios( {
     method: 'post',
     url: '/base/post',
     headers: {
         'content-type': 'application/json;charset=utf-8'
     },
+} ).then( res =>
+{
+    console.log( res );
 } )
 
 // data为I哪天Array类型的数据
 const arr = new Int32Array( [ 21, 31 ] )
 
+// tslint:disable-next-line: no-floating-promises
 axios( {
     method: 'post',
     url: '/base/buffer',
     data: arr
+} ).then( res =>
+{
+    console.log( res );
 } )
 
 // data 为 URLSearchParams 类型， 浏览器会自动为请求 header加上合适的 Content-Type
 const paramsString = 'q=URLUtils.searchParams&topic=api'
 const searchParams = new URLSearchParams( paramsString )
 
+// tslint:disable-next-line: no-floating-promises
 axios( {
     method: 'post',
     url: '/base/post',
     data: searchParams
+} ).then( res =>
+{
+    console.log( res );
 } )
