@@ -30,6 +30,8 @@ export interface AxiosRequestConfig {
   responseType?: XMLHttpRequestResponseType
   // 超时时间( 单位：ms)
   timeout?: number
+
+  [key: string]: any
 }
 
 // 响应接口
