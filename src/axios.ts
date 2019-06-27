@@ -1,5 +1,5 @@
 import { AxiosInstance } from './types'
-import { Axios } from './core/axios'
+import { Axios } from './core/core'
 import { extend } from './helpers/utils'
 
 function createInstance(): AxiosInstance {

@@ -1,3 +1,5 @@
+import { Interceptors } from '../core/core'
+
 export type Method =
   | 'get'
   | 'GET'
@@ -64,6 +66,9 @@ export interface AxiosError extends Error {
 }
 
 export interface Axios {
+  // 拦截器
+  interceptors: Interceptors
+
   // 基础请求方法
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
@@ -88,4 +93,21 @@ export interface AxiosInstance extends Axios {
   <T = any>(config?: AxiosRequestConfig): AxiosPromise<T>
 
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+}
+
+// 拦截器管理类
+// 拦截器分为两种： 请求拦截器 | 响应拦截器
+// T 对应两种不同的类型： AxiosRequestConfig | AxiosResponse
+export interface InterceptorManager<T> {
+  user(resolved: ResolvedFn<T>, rejected: RejectedFn): number
+
+  eject(id: number): void
+}
+// resolve函数接口
+export interface ResolvedFn<T = any> {
+  (val: T): Promise<T> | T
+}
+// reject函数接口
+export interface RejectedFn {
+  (err: any): any
 }

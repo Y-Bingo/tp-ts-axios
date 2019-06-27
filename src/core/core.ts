@@ -1,7 +1,28 @@
-import { AxiosPromise, AxiosRequestConfig } from '../types'
+import { AxiosPromise, AxiosRequestConfig, AxiosResponse, ResolvedFn, RejectedFn } from '../types'
 import dispatchRequest from './dispatchRequest'
+import InterceptorManager from './InterceptorManager'
+
+// 拦截器实例接口
+export interface Interceptors {
+  request: InterceptorManager<AxiosRequestConfig>
+  response: InterceptorManager<AxiosResponse>
+}
+
+interface PromiseChain {
+  resolved: ResolvedFn | ((val: AxiosRequestConfig) => AxiosPromise)
+  rejected?: RejectedFn
+}
 
 export class Axios {
+  interceptors: Interceptors
+
+  constructor() {
+    this.interceptors = {
+      request: new InterceptorManager<AxiosRequestConfig>(),
+      response: new InterceptorManager<AxiosResponse>()
+    }
+  }
+
   // 基础请求方法
   request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
@@ -10,7 +31,31 @@ export class Axios {
     } else {
       config = url
     }
-    return dispatchRequest(config)
+
+    // 构建执行链
+    const chain: PromiseChain[] = [
+      {
+        resolved: dispatchRequest,
+        rejected: undefined
+      }
+    ]
+
+    this.interceptors.request.forEach(interceptor => {
+      chain.unshift(interceptor)
+    })
+
+    this.interceptors.response.forEach(interceptor => {
+      chain.push(interceptor)
+    })
+
+    let promise = Promise.resolve(config)
+    // 执行
+    while (chain.length) {
+      let { resolved, rejected } = chain.shift()!
+      promise = promise.then(resolved, rejected)
+    }
+
+    return promise
   }
 
   // method: GET
