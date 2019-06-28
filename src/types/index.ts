@@ -109,6 +109,10 @@ export interface AxiosInstance extends Axios {
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
 }
 
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
+}
+
 // 拦截器管理类
 // 拦截器分为两种： 请求拦截器 | 响应拦截器
 // T 对应两种不同的类型： AxiosRequestConfig | AxiosResponse
