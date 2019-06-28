@@ -6,6 +6,7 @@ import { flattenHeaders } from '../helpers/headers'
 import transform from './transform'
 
 function dispatchRequest(config: AxiosRequestConfig): AxiosPromise {
+  throwIfCancellationRequest(config)
   // TODO
   processConfig(config)
   return xhr(config).then(res => {
@@ -25,6 +26,13 @@ function processConfig(config: AxiosRequestConfig): void {
 function transformURL(config: AxiosRequestConfig): string {
   const { url, params } = config
   return buildURL(url!, params)
+}
+
+// token检查，使用过的token则抛出
+function throwIfCancellationRequest(config: AxiosRequestConfig): void {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequest()
+  }
 }
 
 export default dispatchRequest
