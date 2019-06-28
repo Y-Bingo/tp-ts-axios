@@ -68,6 +68,8 @@ export interface AxiosError extends Error {
 }
 
 export interface Axios {
+  // 默认配置
+  defaults: AxiosRequestConfig
   // 拦截器
   interceptors: Interceptors
 

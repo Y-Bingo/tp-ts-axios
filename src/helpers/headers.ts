@@ -1,4 +1,5 @@
-import { isPlainObject } from './utils'
+import { isPlainObject, deepMerge } from './utils'
+import { Method } from '../types'
 
 /**
  *
@@ -54,4 +55,23 @@ export function parseHeaders(headers: string): any {
   })
 
   return parse
+}
+
+/**
+ * 扁平化请求头
+ * 根据请求的方法，把配置中的headers 扁平化 成只有一层
+ */
+export function flattenHeaders(headers: any, method: Method): any {
+  if (!headers) return headers
+
+  // 参数右边覆盖左边的的headers
+  headers = deepMerge(headers.common || {}, headers[method] || {}, headers)
+
+  // 清空headers其他的不需要的东西
+  const methodsToDelete = ['delete', 'get', 'head', 'options', 'post', 'put', 'patch']
+  methodsToDelete.forEach(methods => {
+    delete headers[methods]
+  })
+
+  return headers
 }
