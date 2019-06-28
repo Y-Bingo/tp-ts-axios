@@ -32,6 +32,16 @@ export interface AxiosRequestConfig {
   timeout?: number
 
   [key: string]: any
+
+  // 请求预处理
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  // 响应预处理
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+}
+
+// 预处理函数
+export interface AxiosTransformer {
+  (data: any, header?: any): any
 }
 
 // 响应接口
