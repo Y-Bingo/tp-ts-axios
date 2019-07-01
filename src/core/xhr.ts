@@ -4,7 +4,7 @@ import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, method = 'get', url, headers, responseType, timeout } = config
+    const { data = null, method = 'get', url, headers, responseType, timeout, cancelToken } = config
 
     const request = new XMLHttpRequest()
     // 打开一个连接
@@ -72,6 +72,15 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       }
       // handlerResponse( response, resolve, reject )
     }
+
+    if (cancelToken) {
+      // tslint:disable-next-line: no-floating-promises
+      cancelToken.promise.then(reason => {
+        request.abort()
+        reject(reason)
+      })
+    }
+
     // 发送
     request.send(data)
   })

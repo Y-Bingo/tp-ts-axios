@@ -31,12 +31,16 @@ export interface AxiosRequestConfig {
   // 超时时间( 单位：ms)
   timeout?: number
 
-  [key: string]: any
-
   // 请求预处理
   transformRequest?: AxiosTransformer | AxiosTransformer[]
   // 响应预处理
   transformResponse?: AxiosTransformer | AxiosTransformer[]
+
+  // 删除令牌
+  cancelToken?: CancelToken
+
+  //   其他字段
+  [key: string]: any
 }
 
 // 预处理函数
@@ -111,6 +115,10 @@ export interface AxiosInstance extends Axios {
 
 export interface AxiosStatic extends AxiosInstance {
   create(config?: AxiosRequestConfig): AxiosInstance
+
+  CancelToken: CancelTokenStatic
+  Cancel: CancelStatic
+  isCancel: (value: any) => boolean
 }
 
 // 拦截器管理类
@@ -128,4 +136,42 @@ export interface ResolvedFn<T = any> {
 // reject函数接口
 export interface RejectedFn {
   (err: any): any
+}
+
+// 实例类型 令牌【删除】
+export interface CancelToken {
+  promise: Promise<Cancel>
+  reason?: Cancel
+
+  throwIfRequest(): void
+}
+
+// 取消方法
+export interface Canceler {
+  (msg?: string): void
+}
+
+// cancelToken的构造函数接口
+export interface CancelExecutor {
+  (cancel: Canceler): void
+}
+
+export interface CancelTokenSource {
+  token: CancelToken
+  cancel: Canceler
+}
+
+// 静态类型
+export interface CancelTokenStatic {
+  new (executor: CancelExecutor): CancelToken
+
+  source(): CancelTokenSource
+}
+
+export interface Cancel {
+  message?: string
+}
+
+export interface CancelStatic {
+  new (message?: string): Cancel
 }
