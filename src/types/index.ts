@@ -36,16 +36,46 @@ export interface AxiosRequestConfig {
   // 响应预处理
   transformResponse?: AxiosTransformer | AxiosTransformer[]
 
+  //   允许发送cookie凭证
+  withCredentials?: boolean
+
+  // xsrf cookie名称
+  xsrfCookieName?: string
+  // xsrf header名称
+  xsrfHeaderName?: string
+
+  // Authorization字段配置
+  auth?: AxiosBasicCredentials
+
+  // 上传监听
+  onUploadProgress?: (evt: ProgressEvent) => void
+  // 下载监听
+  onDownProgress?: (evt: ProgressEvent) => void
+
   // 删除令牌
   cancelToken?: CancelToken
 
+  //   参数序列化
+  paramsSerializer?: (params: any) => string
+
+  //   基础访问地址
+  baseURL?: string
+
   //   其他字段
   [key: string]: any
+
+  //   合法状态码
+  validateStatus?: (statue: number) => boolean
 }
 
 // 预处理函数
 export interface AxiosTransformer {
   (data: any, header?: any): any
+}
+
+export interface AxiosBasicCredentials {
+  username: string
+  password: string
 }
 
 // 响应接口
@@ -105,6 +135,9 @@ export interface Axios {
   put<T = any>(url: string, body?: any, config?: AxiosRequestConfig): AxiosPromise<T>
   // method: PATCH
   patch<T = any>(url: string, body?: any, config?: AxiosRequestConfig): AxiosPromise<T>
+
+  // 返回一个URI
+  getUri(config?: AxiosRequestConfig): string
 }
 
 export interface AxiosInstance extends Axios {
@@ -119,6 +152,16 @@ export interface AxiosStatic extends AxiosInstance {
   CancelToken: CancelTokenStatic
   Cancel: CancelStatic
   isCancel: (value: any) => boolean
+
+  all<T>(promise: Array<T | Promise<T>>): Promise<T[]>
+
+  spread<T, R>(callback: (...args: T[]) => R): (arr: T[]) => R
+
+  Axios: AxiosClassStatic
+}
+
+export interface AxiosClassStatic {
+  new (config: AxiosRequestConfig): Axios
 }
 
 // 拦截器管理类

@@ -1,7 +1,8 @@
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse, ResolvedFn, RejectedFn } from '../types'
-import dispatchRequest from './dispatchRequest'
+import dispatchRequest, { transformURL } from './dispatchRequest'
 import InterceptorManager from './InterceptorManager'
 import mergeConfig from './mergeConfig'
+import transform from './transform'
 
 // 拦截器实例接口
 export interface Interceptors {
@@ -94,6 +95,11 @@ export class Axios {
     return this._requestMethodWithData('PATCH', url, data, config)
   }
 
+  getUri(config?: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config)
+    return transformURL(config)
+  }
+
   private _requestMethodWithoutData(
     method: string,
     url: string,
@@ -108,6 +114,6 @@ export class Axios {
     data: any,
     config?: AxiosRequestConfig
   ): AxiosPromise {
-    return this.request(Object.assign(config || {}, { url, method }))
+    return this.request(Object.assign(config || {}, { url, method, data }))
   }
 }
