@@ -44,6 +44,11 @@ export interface AxiosRequestConfig {
   // xsrf header名称
   xsrfHeaderName?: string
 
+  // 上传监听
+  onUploadProgress?: (evt: ProgressEvent) => void
+  // 下载监听
+  onDownProgress?: (evt: ProgressEvent) => void
+
   // 删除令牌
   cancelToken?: CancelToken
 
