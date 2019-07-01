@@ -13,6 +13,8 @@ export type Method =
   | 'OPTIONS'
   | 'put'
   | 'PUT'
+  | 'patch'
+  | 'PATCH'
 
 // 请求配置
 export interface AxiosRequestConfig {
