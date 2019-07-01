@@ -36,6 +36,9 @@ export interface AxiosRequestConfig {
   // 响应预处理
   transformResponse?: AxiosTransformer | AxiosTransformer[]
 
+  //   允许发送cookie凭证
+  withCredentials?: boolean
+
   // 删除令牌
   cancelToken?: CancelToken
 

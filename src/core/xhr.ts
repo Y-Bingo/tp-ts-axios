@@ -4,7 +4,16 @@ import { createError } from '../helpers/error'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
-    const { data = null, method = 'get', url, headers, responseType, timeout, cancelToken } = config
+    const {
+      data = null,
+      method = 'get',
+      url,
+      headers,
+      responseType,
+      timeout,
+      cancelToken,
+      withCredentials
+    } = config
 
     const request = new XMLHttpRequest()
     // 打开一个连接
@@ -18,6 +27,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
         request.setRequestHeader(name, headers[name])
       }
     })
+
     // 设置请求类型
     if (responseType) {
       request.responseType = responseType
@@ -25,6 +35,10 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     // 设置超时时间
     if (timeout) {
       request.timeout = timeout
+    }
+    // 设置是否允许发送cookies
+    if (withCredentials) {
+      request.withCredentials = withCredentials
     }
 
     // 监听网络错误
