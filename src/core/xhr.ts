@@ -29,6 +29,7 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       withCredentials,
       xsrfHeaderName,
       xsrfCookieName,
+      auth,
       onDownProgress,
       onUploadProgress
     } = config
@@ -121,6 +122,11 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       if (isFormData(data)) {
         delete headers['Content-Type']
       }
+
+      if (auth) {
+        headers['Authorization'] = 'Basic ' + btoa(auth.username + ':' + auth.password)
+      }
+
       // 设置请求头
       Object.keys(headers).forEach(name => {
         // 判断没有请求body的时候 不设置headers[ content-type ]

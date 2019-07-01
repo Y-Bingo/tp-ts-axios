@@ -44,6 +44,9 @@ export interface AxiosRequestConfig {
   // xsrf header名称
   xsrfHeaderName?: string
 
+  // Authorization字段配置
+  auth?: AxiosBasicCredentials
+
   // 上传监听
   onUploadProgress?: (evt: ProgressEvent) => void
   // 下载监听
@@ -59,6 +62,11 @@ export interface AxiosRequestConfig {
 // 预处理函数
 export interface AxiosTransformer {
   (data: any, header?: any): any
+}
+
+export interface AxiosBasicCredentials {
+  username: string
+  password: string
 }
 
 // 响应接口
