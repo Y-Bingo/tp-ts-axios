@@ -30,6 +30,18 @@ export interface AxiosRequestConfig {
   responseType?: XMLHttpRequestResponseType
   // 超时时间( 单位：ms)
   timeout?: number
+
+  [key: string]: any
+
+  // 请求预处理
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  // 响应预处理
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+}
+
+// 预处理函数
+export interface AxiosTransformer {
+  (data: any, header?: any): any
 }
 
 // 响应接口
@@ -66,6 +78,8 @@ export interface AxiosError extends Error {
 }
 
 export interface Axios {
+  // 默认配置
+  defaults: AxiosRequestConfig
   // 拦截器
   interceptors: Interceptors
 
@@ -93,6 +107,10 @@ export interface AxiosInstance extends Axios {
   <T = any>(config?: AxiosRequestConfig): AxiosPromise<T>
 
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+}
+
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
 }
 
 // 拦截器管理类
