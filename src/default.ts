@@ -27,7 +27,10 @@ const defaults: AxiosRequestConfig = {
     function(data: any, headers: any): any {
       return transformResponse(data)
     }
-  ]
+  ],
+  validateStatus(status: number): boolean {
+    return status >= 200 && status < 300
+  }
 }
 
 // 不需要请求体的请求方式

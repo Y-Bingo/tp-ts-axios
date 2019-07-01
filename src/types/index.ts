@@ -57,6 +57,9 @@ export interface AxiosRequestConfig {
 
   //   其他字段
   [key: string]: any
+
+  //   合法状态码
+  validateStatus?: (statue: number) => boolean
 }
 
 // 预处理函数
