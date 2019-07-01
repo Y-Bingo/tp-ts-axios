@@ -55,6 +55,9 @@ export interface AxiosRequestConfig {
   // 删除令牌
   cancelToken?: CancelToken
 
+  //   参数序列化
+  paramsSerializer?: (params: any) => string
+
   //   其他字段
   [key: string]: any
 

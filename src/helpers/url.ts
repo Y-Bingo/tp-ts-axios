@@ -1,4 +1,4 @@
-import { isDate, isPlainObject } from './utils'
+import { isDate, isPlainObject, isURLSearchParams } from './utils'
 
 // URL源
 interface URLOrigin {
@@ -36,73 +36,84 @@ function encode(val: string): string {
  * })
  * 根据params来构建url
  */
-export function buildURL(url: string, params?: any): string {
+export function buildURL(
+  url: string,
+  params?: any,
+  paramsSerializer?: (params: any) => string
+): string {
   if (!params) {
     return url
   }
 
-  const parts: string[] = []
+  let serializedParams
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params)
+  } else if (isURLSearchParams(params)) {
+    serializedParams = params.toString()
+  } else {
+    const parts: string[] = []
 
-  Object.keys(params).forEach(key => {
-    const val = params[key]
+    Object.keys(params).forEach(key => {
+      const val = params[key]
 
-    /**
-     * 空值忽略
-     * 对于值为 null 或者 undefined 的属性，我们是不会添加到 url 参数中的
-     * params: {
-     *     foo: 'bar',
-     *     baz: null
-     * }
-     * 最终请求的 url 是 /base/get?foo=bar
-     */
-    if (val === null || typeof val === 'undefined') {
-      return
-    }
-
-    let values = []
-    /**
-     * 参数值为数组
-     * params: {
-     *     foo: ['bar', 'baz']
-     * }
-     * 最终请求的 url 是 /base/get?foo[]=bar&foo[]=baz'
-     */
-    if (Array.isArray(val)) {
-      values = val
-      key += '[]'
-    } else {
-      values = [val]
-    }
-
-    values.forEach(val => {
-      if (isDate(val)) {
-        /**
-         * 参数值为Date类型
-         * params: {
-         *     foo: new Date()
-         * }
-         * 最终请求的 url 是 /base/get?date=2019-04-01T05:55:39.030Z，date 后面拼接的是 date.toISOString() 的结果
-         */
-        val = val.toISOString()
-      } else if (isPlainObject(val)) {
-        /**
-         * 参数值为对象
-         * params: {
-         *     foo: {
-         *          bar: 'baz'
-         *     }
-         * }
-         * 最终请求的 url 是 /base/get?foo=%7B%22bar%22:%22baz%22%7D，foo 后面拼接的是 {"bar":"baz"} encode 后的结果
-         */
-        val = JSON.stringify(val)
+      /**
+       * 空值忽略
+       * 对于值为 null 或者 undefined 的属性，我们是不会添加到 url 参数中的
+       * params: {
+       *     foo: 'bar',
+       *     baz: null
+       * }
+       * 最终请求的 url 是 /base/get?foo=bar
+       */
+      if (val === null || typeof val === 'undefined') {
+        return
       }
-      parts.push(`${encode(key)}=${encode(val)}`)
+
+      let values = []
+      /**
+       * 参数值为数组
+       * params: {
+       *     foo: ['bar', 'baz']
+       * }
+       * 最终请求的 url 是 /base/get?foo[]=bar&foo[]=baz'
+       */
+      if (Array.isArray(val)) {
+        values = val
+        key += '[]'
+      } else {
+        values = [val]
+      }
+
+      values.forEach(val => {
+        if (isDate(val)) {
+          /**
+           * 参数值为Date类型
+           * params: {
+           *     foo: new Date()
+           * }
+           * 最终请求的 url 是 /base/get?date=2019-04-01T05:55:39.030Z，date 后面拼接的是 date.toISOString() 的结果
+           */
+          val = val.toISOString()
+        } else if (isPlainObject(val)) {
+          /**
+           * 参数值为对象
+           * params: {
+           *     foo: {
+           *          bar: 'baz'
+           *     }
+           * }
+           * 最终请求的 url 是 /base/get?foo=%7B%22bar%22:%22baz%22%7D，foo 后面拼接的是 {"bar":"baz"} encode 后的结果
+           */
+          val = JSON.stringify(val)
+        }
+        parts.push(`${encode(key)}=${encode(val)}`)
+      })
     })
-  })
+
+    serializedParams = parts.join('&')
+  }
 
   // 拼接
-  let serializedParams = parts.join('&')
-
   if (serializedParams) {
     /**
      * 丢弃 url 中的哈希标记

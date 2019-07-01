@@ -24,8 +24,8 @@ function processConfig(config: AxiosRequestConfig): void {
 
 // url处理
 function transformURL(config: AxiosRequestConfig): string {
-  const { url, params } = config
-  return buildURL(url!, params)
+  const { url, params, paramsSerializer } = config
+  return buildURL(url!, params, paramsSerializer)
 }
 
 // token检查，使用过的token则抛出

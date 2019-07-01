@@ -1,3 +1,5 @@
+import { type } from 'os'
+
 const toString = Object.prototype.toString
 
 // ts 谓词保护
@@ -30,6 +32,10 @@ export function extend<T, U>(to: T, from: U): T & U {
 
 export function isFormData(val: any): val is FormData {
   return typeof val !== 'undefined' && val instanceof FormData
+}
+
+export function isURLSearchParams(val: any): val is URLSearchParams {
+  return typeof val !== 'undefined' && val instanceof URLSearchParams
 }
 
 // 深拷贝
