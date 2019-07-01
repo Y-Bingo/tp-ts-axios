@@ -1,6 +1,8 @@
 import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from '../types'
 import { parseHeaders } from '../helpers/headers'
 import { createError } from '../helpers/error'
+import { isURLSameOrigin } from '../helpers/url'
+import cookie from '../helpers/cookie'
 
 export default function xhr(config: AxiosRequestConfig): AxiosPromise {
   return new Promise((resolve, reject) => {
@@ -12,21 +14,14 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
       responseType,
       timeout,
       cancelToken,
-      withCredentials
+      withCredentials,
+      xsrfHeaderName,
+      xsrfCookieName
     } = config
 
     const request = new XMLHttpRequest()
     // 打开一个连接
     request.open(method.toUpperCase(), url!, true)
-    // 设置请求头
-    Object.keys(headers).forEach(name => {
-      // 判断没有请求body的时候 不设置headers[ content-type ]
-      if (data === null && name.toLowerCase() === 'content-type') {
-        delete headers[name]
-      } else {
-        request.setRequestHeader(name, headers[name])
-      }
-    })
 
     // 设置请求类型
     if (responseType) {
@@ -40,6 +35,25 @@ export default function xhr(config: AxiosRequestConfig): AxiosPromise {
     if (withCredentials) {
       request.withCredentials = withCredentials
     }
+    // 设置xsrf token
+    if (withCredentials || (isURLSameOrigin(url!) && xsrfCookieName)) {
+      if (xsrfCookieName && xsrfHeaderName) {
+        const xsrfValue = cookie.read(xsrfCookieName)
+        if (xsrfValue) {
+          headers[xsrfHeaderName] = xsrfValue
+        }
+      }
+    }
+
+    // 设置请求头
+    Object.keys(headers).forEach(name => {
+      // 判断没有请求body的时候 不设置headers[ content-type ]
+      if (data === null && name.toLowerCase() === 'content-type') {
+        delete headers[name]
+      } else {
+        request.setRequestHeader(name, headers[name])
+      }
+    })
 
     // 监听网络错误
     request.onerror = function handleError() {

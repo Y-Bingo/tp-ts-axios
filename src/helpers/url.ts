@@ -1,5 +1,13 @@
 import { isDate, isPlainObject } from './utils'
 
+// URL源
+interface URLOrigin {
+  // 协议
+  protocol: string
+  // 域名
+  host: string
+}
+
 // 进行URI编码 支持特殊字符
 /**
  * 特殊字符支持
@@ -120,4 +128,20 @@ export function buildURL(url: string, params?: any): string {
   }
 
   return url
+}
+
+// 判断是否是同源
+export function isURLSameOrigin(requestURL: string): boolean {
+  const parseOrigin = resolveURL(requestURL)
+  return parseOrigin.host === currentOrigin.host && parseOrigin.protocol === currentOrigin.protocol
+}
+// 通过构建a标签类获取url的protocol和host
+const urlParsingNode = document.createElement('a')
+const currentOrigin = resolveURL(window.location.href)
+// 解析URL => protocol:host
+function resolveURL(url: string): URLOrigin {
+  urlParsingNode.setAttribute('href', url)
+
+  const { protocol, host } = urlParsingNode
+  return { protocol, host }
 }

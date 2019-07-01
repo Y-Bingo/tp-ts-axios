@@ -39,6 +39,11 @@ export interface AxiosRequestConfig {
   //   允许发送cookie凭证
   withCredentials?: boolean
 
+  // xsrf cookie名称
+  xsrfCookieName?: string
+  // xsrf header名称
+  xsrfHeaderName?: string
+
   // 删除令牌
   cancelToken?: CancelToken
 
